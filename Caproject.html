@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VolunteerHub - NGO Management</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            display: flex;
+            color: #1e293b;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 230px;
+            min-height: 100vh;
+            background: #172554;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            color: #60a5fa;
+        }
+
+        .sidebar button {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin: 6px 0;
+            background: transparent;
+            color: white;
+            border: none;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .sidebar button:hover,
+        .sidebar button.active {
+            background: #2563eb;
+        }
+
+        /* MAIN CONTENT */
+
+        main {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h1 {
+            color: #172554;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 19px;
+        }
+
+        /* DASHBOARD CARDS */
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 160px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        .card h3 {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 30px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        /* PANELS */
+
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 8px #e2e8f0;
+        }
+
+        /* FORMS */
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin: 8px 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .days {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .days label {
+            font-weight: normal;
+            margin: 0;
+        }
+
+        /* BUTTONS */
+
+        .add-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .add-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .green-btn {
+            background: #16a34a;
+        }
+
+        .green-btn:hover {
+            background: #15803d;
+        }
+
+        .search {
+            max-width: 400px;
+        }
+
+        /* TABLES */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            min-width: 450px;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #dbeafe;
+            color: #172554;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .empty {
+            color: #64748b;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome {
+            background: #dbeafe;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .welcome p {
+            margin-top: 8px;
+            color: #475569;
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        @media(max-width: 700px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar button {
+                display: inline-block;
+                width: auto;
+                padding: 10px;
+            }
+
+            main {
+                padding: 18px;
+            }
+        }
+
+        /* PRINT REPORT */
+
+        @media print {
+            .sidebar,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                display: block;
+                background: white;
+            }
+
+            main {
+                padding: 0;
+            }
+
+            .page {
+                display: none !important;
+            }
+
+            #reports {
+                display: block !important;
+            }
+
+            .panel {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+        <h2>VolunteerHub</h2>
+
+        <button class="active" onclick="showPage('dashboard', this)">
+            Dashboard
+        </button>
+
+        <button onclick="showPage('volunteers', this)">
+            Volunteers
+        </button>
+
+        <button onclick="showPage('campaigns', this)">
+            Campaigns
+        </button>
+
+        <button onclick="showPage('assignments', this)">
+            Assignments
+        </button>
+
+        <button onclick="showPage('attendance', this)">
+            Participation
+        </button>
+
+        <button onclick="showPage('reports', this)">
+            Reports
+        </button>
+    </div>
+
+    <main>
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard" class="page active">
+
+            <h1>Dashboard</h1>
+
+            <div class="welcome">
+                <h2>Welcome to VolunteerHub!</h2>
+                <p>
+                    Manage volunteers, campaigns, shifts and
+                    participation from one place.
+                </p>
+            </div>
+
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Total Volunteers</h3>
+                    <p id="volunteerCount">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Total Campaigns</h3>
+                    <p id="campaignCount">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Total Assignments</h3>
+                    <p id="assignmentCount">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Present Volunteers</h3>
+                    <p id="presentCount">0</p>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <h2>About the Platform</h2>
+
+                <p>
+                    VolunteerHub is an NGO Volunteer Operations
+                    Platform that helps organizations manage
+                    volunteers and campaigns efficiently.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- VOLUNTEERS -->
+
+        <section id="volunteers" class="page">
+
+            <h1>Volunteer Management</h1>
+
+            <div class="panel">
+
+                <h2>Register New Volunteer</h2>
+
+                <form onsubmit="addVolunteer(event)">
+
+                    <label>Full Name</label>
+                    <input type="text" id="volName"
+                        placeholder="Enter volunteer name" required>
+
+                    <label>Email Address</label>
+                    <input type="email" id="volEmail"
+                        placeholder="Enter email" required>
+
+                    <label>Skills</label>
+                    <input type="text" id="volSkill"
+                        placeholder="Example: Teaching, First Aid" required>
+
+                    <label>Available Days</label>
+
+                    <div class="days">
+                        <label><input type="checkbox" name="availability" value="Monday"> Monday</label>
+                        <label><input type="checkbox" name="availability" value="Tuesday"> Tuesday</label>
+                        <label><input type="checkbox" name="availability" value="Wednesday"> Wednesday</label>
+                        <label><input type="checkbox" name="availability" value="Thursday"> Thursday</label>
+                        <label><input type="checkbox" name="availability" value="Friday"> Friday</label>
+                        <label><input type="checkbox" name="availability" value="Saturday"> Saturday</label>
+                        <label><input type="checkbox" name="availability" value="Sunday"> Sunday</label>
+                    </div>
+
+                    <button class="add-btn" type="submit">
+                        Register Volunteer
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>Volunteer List</h2>
+
+                <input class="search" type="text"
+                    id="volSearch"
+                    placeholder="Search volunteer by name..."
+                    oninput="displayVolunteers()">
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Skills</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="volunteerTable"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CAMPAIGNS -->
+
+        <section id="campaigns" class="page">
+
+            <h1>Campaign Management</h1>
+
+            <div class="panel">
+
+                <h2>Create New Campaign</h2>
+
+                <form onsubmit="addCampaign(event)">
+
+                    <label>Campaign Name</label>
+                    <input type="text" id="campName"
+                        placeholder="Enter campaign name" required>
+
+                    <label>Location</label>
+                    <input type="text" id="campLocation"
+                        placeholder="Enter location" required>
+
+                    <label>Campaign Date</label>
+                    <input type="date" id="campDate" required>
+
+                    <label>Description</label>
+                    <input type="text" id="campDescription"
+                        placeholder="Describe the campaign" required>
+
+                    <button class="add-btn" type="submit">
+                        Create Campaign
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>Available Campaigns</h2>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="campaignTable"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ASSIGNMENTS AND SHIFTS -->
+
+        <section id="assignments" class="page">
+
+            <h1>Assignments and Shift Scheduling</h1>
+
+            <div class="panel">
+
+                <h2>Assign Volunteer</h2>
+
+                <form onsubmit="assignVolunteer(event)">
+
+                    <label>Select Volunteer</label>
+
+                    <select id="volunteerSelect" required>
+                        <option value="">Choose Volunteer</option>
+                    </select>
+
+                    <label>Select Campaign</label>
+
+                    <select id="campaignSelect" required>
+                        <option value="">Choose Campaign</option>
+                    </select>
+
+                    <label>Assign Role</label>
+
+                    <select id="roleSelect" required>
+                        <option value="">Choose Role</option>
+                        <option value="Coordinator">Coordinator</option>
+                        <option value="Team Leader">Team Leader</option>
+                        <option value="Helper">Helper</option>
+                        <option value="Organizer">Organizer</option>
+                        <option value="Medical Support">Medical Support</option>
+                    </select>
+
+                    <label>Shift Start Time</label>
+                    <input type="time" id="shiftStart" required>
+
+                    <label>Shift End Time</label>
+                    <input type="time" id="shiftEnd" required>
+
+                    <button class="add-btn" type="submit">
+                        Assign Volunteer
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>Assignment Records</h2>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Campaign</th>
+                                <th>Role</th>
+                                <th>Shift Start</th>
+                                <th>Shift End</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="assignmentTable"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PARTICIPATION / ATTENDANCE -->
+
+        <section id="attendance" class="page">
+
+            <h1>Volunteer Participation</h1>
+
+            <div class="panel">
+
+                <h2>Mark Participation</h2>
+
+                <form onsubmit="markAttendance(event)">
+
+                    <label>Select Assignment</label>
+
+                    <select id="attendanceSelect" required>
+                        <option value="">Choose Assignment</option>
+                    </select>
+
+                    <label>Participation Status</label>
+
+                    <select id="attendanceStatus" required>
+                        <option value="">Choose Status</option>
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                    </select>
+
+                    <button class="add-btn green-btn" type="submit">
+                        Save Participation
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>Participation Records</h2>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Campaign</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="attendanceTable"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORTS -->
+
+        <section id="reports" class="page">
+
+            <h1>Participation Reports</h1>
+
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Total Assignments</h3>
+                    <p id="reportAssignments">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Present</h3>
+                    <p id="reportPresent">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Absent</h3>
+                    <p id="reportAbsent">0</p>
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>Participation Summary</h2>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Campaign</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="reportTable"></tbody>
+                    </table>
+                </div>
+
+                <button class="add-btn no-print"
+                    onclick="window.print()">
+                    Print / Save Report as PDF
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        // PROJECT DATA ARRAYS
+
+        let volunteers = [];
+        let campaigns = [];
+        let assignments = [];
+        let attendance = [];
+
+
+        // PAGE NAVIGATION
+
+        function showPage(pageName, button) {
+
+            let pages = document.querySelectorAll(".page");
+
+            for (let i = 0; i < pages.length; i++) {
+                pages[i].classList.remove("active");
+            }
+
+            document.getElementById(pageName).classList.add("active");
+
+            let buttons = document.querySelectorAll(".sidebar button");
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            button.classList.add("active");
+
+            if (pageName === "reports") {
+                displayReports();
+            }
+        }
+
+
+        // ADD VOLUNTEER
+
+        function addVolunteer(event) {
+
+            event.preventDefault();
+
+            let name = document.getElementById("volName").value.trim();
+            let email = document.getElementById("volEmail").value.trim();
+            let skill = document.getElementById("volSkill").value.trim();
+
+            let checkboxes = document.querySelectorAll(
+                'input[name="availability"]:checked'
+            );
+
+            let availableDays = [];
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                availableDays.push(checkboxes[i].value);
+            }
+
+            if (availableDays.length === 0) {
+                alert("Please select at least one available day.");
+                return;
+            }
+
+            for (let i = 0; i < volunteers.length; i++) {
+
+                if (volunteers[i].email.toLowerCase() === email.toLowerCase()) {
+                    alert("This email is already registered.");
+                    return;
+                }
+
+            }
+
+            let volunteer = {
+                name: name,
+                email: email,
+                skill: skill,
+                availability: availableDays
+            };
+
+            volunteers.push(volunteer);
+
+            displayVolunteers();
+            updateDropdowns();
+            updateDashboard();
+
+            document.querySelector("#volunteers form").reset();
+
+            alert("Volunteer registered successfully!");
+        }
+
+
+        // DISPLAY VOLUNTEERS
+
+        function displayVolunteers() {
+
+            let table = document.getElementById("volunteerTable");
+
+            let search = document.getElementById("volSearch").value.toLowerCase();
+
+            table.innerHTML = "";
+
+            for (let i = 0; i < volunteers.length; i++) {
+
+                if (volunteers[i].name.toLowerCase().includes(search)) {
+
+                    let row = table.insertRow();
+
+                    row.insertCell().textContent = volunteers[i].name;
+                    row.insertCell().textContent = volunteers[i].email;
+                    row.insertCell().textContent = volunteers[i].skill;
+                    row.insertCell().textContent = volunteers[i].availability.join(", ");
+
+                }
+
+            }
+
+            if (table.rows.length === 0) {
+                let row = table.insertRow();
+                let cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = "No volunteers found.";
+                cell.className = "empty";
+            }
+        }
+
+
+        // ADD CAMPAIGN
+
+        function addCampaign(event) {
+
+            event.preventDefault();
+
+            let name = document.getElementById("campName").value.trim();
+            let location = document.getElementById("campLocation").value.trim();
+            let date = document.getElementById("campDate").value;
+            let description = document.getElementById("campDescription").value.trim();
+
+            let campaign = {
+                name: name,
+                location: location,
+                date: date,
+                description: description
+            };
+
+            campaigns.push(campaign);
+
+            displayCampaigns();
+            updateDropdowns();
+            updateDashboard();
+
+            document.querySelector("#campaigns form").reset();
+
+            alert("Campaign created successfully!");
+        }
+
+
+        // DISPLAY CAMPAIGNS
+
+        function displayCampaigns() {
+
+            let table = document.getElementById("campaignTable");
+
+            table.innerHTML = "";
+
+            for (let i = 0; i < campaigns.length; i++) {
+
+                let row = table.insertRow();
+
+                row.insertCell().textContent = campaigns[i].name;
+                row.insertCell().textContent = campaigns[i].location;
+                row.insertCell().textContent = campaigns[i].date;
+                row.insertCell().textContent = campaigns[i].description;
+
+            }
+
+            if (campaigns.length === 0) {
+                let row = table.insertRow();
+                let cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = "No campaigns created yet.";
+                cell.className = "empty";
+            }
+        }
+
+
+        // UPDATE DROPDOWN MENUS
+
+        function updateDropdowns() {
+
+            let volunteerSelect = document.getElementById("volunteerSelect");
+            let campaignSelect = document.getElementById("campaignSelect");
+
+            let attendanceSelect = document.getElementById("attendanceSelect");
+
+            volunteerSelect.innerHTML = '<option value="">Choose Volunteer</option>';
+
+            campaignSelect.innerHTML = '<option value="">Choose Campaign</option>';
+
+            attendanceSelect.innerHTML = '<option value="">Choose Assignment</option>';
+
+            for (let i = 0; i < volunteers.length; i++) {
+
+                let option = document.createElement("option");
+
+                option.value = i;
+                option.textContent = volunteers[i].name;
+
+                volunteerSelect.appendChild(option);
+            }
+
+            for (let i = 0; i < campaigns.length; i++) {
+
+                let option = document.createElement("option");
+
+                option.value = i;
+                option.textContent = campaigns[i].name;
+
+                campaignSelect.appendChild(option);
+            }
+
+            for (let i = 0; i < assignments.length; i++) {
+
+                let option = document.createElement("option");
+
+                option.value = i;
+
+                option.textContent =
+                    assignments[i].volunteer + " - " +
+                    assignments[i].campaign;
+
+                attendanceSelect.appendChild(option);
+            }
+        }
+
+
+        // ASSIGN VOLUNTEER AND CREATE SHIFT
+
+        function assignVolunteer(event) {
+
+            event.preventDefault();
+
+            let volunteerIndex = document.getElementById("volunteerSelect").value;
+
+            let campaignIndex = document.getElementById("campaignSelect").value;
+
+            let role = document.getElementById("roleSelect").value;
+
+            let start = document.getElementById("shiftStart").value;
+
+            let end = document.getElementById("shiftEnd").value;
+
+            if (volunteerIndex === "" || campaignIndex === "") {
+                alert("Please select a volunteer and campaign.");
+                return;
+            }
+
+            if (start >= end) {
+                alert("Shift end time must be later than start time.");
+                return;
+            }
+
+            let campaignDate = campaigns[campaignIndex].date;
+
+            let day = new Date(campaignDate + "T12:00:00")
+                .toLocaleDateString("en-US", { weekday: "long" });
+
+            let available = volunteers[volunteerIndex].availability;
+
+            if (!available.includes(day)) {
+                alert("This volunteer is not available on the campaign day.");
+                return;
+            }
+
+            for (let i = 0; i < assignments.length; i++) {
+
+                if (
+                    assignments[i].volunteerIndex === Number(volunteerIndex) &&
+                    assignments[i].campaignIndex === Number(campaignIndex)
+                ) {
+                    alert("This volunteer is already assigned to this campaign.");
+                    return;
+                }
+
+            }
+
+            let assignment = {
+
+                volunteer: volunteers[volunteerIndex].name,
+
+                campaign: campaigns[campaignIndex].name,
+
+                role: role,
+
+                start: start,
+
+                end: end,
+
+                volunteerIndex: Number(volunteerIndex),
+
+                campaignIndex: Number(campaignIndex),
+
+                status: "Not Marked"
+
+            };
+
+            assignments.push(assignment);
+
+            displayAssignments();
+            updateDropdowns();
+            updateDashboard();
+
+            document.querySelector("#assignments form").reset();
+
+            alert("Volunteer assigned and shift scheduled!");
+        }
+
+
+        // DISPLAY ASSIGNMENTS
+
+        function displayAssignments() {
+
+            let table = document.getElementById("assignmentTable");
+
+            table.innerHTML = "";
+
+            for (let i = 0; i < assignments.length; i++) {
+
+                let row = table.insertRow();
+
+                row.insertCell().textContent = assignments[i].volunteer;
+                row.insertCell().textContent = assignments[i].campaign;
+                row.insertCell().textContent = assignments[i].role;
+                row.insertCell().textContent = assignments[i].start;
+                row.insertCell().textContent = assignments[i].end;
+
+            }
+
+            if (assignments.length === 0) {
+                let row = table.insertRow();
+                let cell = row.insertCell();
+                cell.colSpan = 5;
+                cell.textContent = "No assignments available.";
+                cell.className = "empty";
+            }
+        }
+
+
+        // MARK PARTICIPATION
+
+        function markAttendance(event) {
+
+            event.preventDefault();
+
+            let assignmentIndex =
+                document.getElementById("attendanceSelect").value;
+
+            let status =
+                document.getElementById("attendanceStatus").value;
+
+            if (assignmentIndex === "") {
+                alert("Please select an assignment.");
+                return;
+            }
+
+            let assignment = assignments[assignmentIndex];
+
+            assignment.status = status;
+
+            let found = false;
+
+            for (let i = 0; i < attendance.length; i++) {
+
+                if (attendance[i].assignmentIndex === Number(assignmentIndex)) {
+
+                    attendance[i].status = status;
+                    found = true;
+                    break;
+
+                }
+
+            }
+
+            if (!found) {
+
+                attendance.push({
+
+                    assignmentIndex: Number(assignmentIndex),
+
+                    volunteer: assignment.volunteer,
+
+                    campaign: assignment.campaign,
+
+                    role: assignment.role,
+
+                    status: status
+
+                });
+
+            }
+
+            displayAttendance();
+            updateDashboard();
+            displayReports();
+
+            document.querySelector("#attendance form").reset();
+
+            alert("Participation record saved!");
+        }
+
+
+        // DISPLAY PARTICIPATION
+
+        function displayAttendance() {
+
+            let table = document.getElementById("attendanceTable");
+
+            table.innerHTML = "";
+
+            for (let i = 0; i < attendance.length; i++) {
+
+                let row = table.insertRow();
+
+                row.insertCell().textContent = attendance[i].volunteer;
+                row.insertCell().textContent = attendance[i].campaign;
+                row.insertCell().textContent = attendance[i].status;
+
+            }
+
+            if (attendance.length === 0) {
+                let row = table.insertRow();
+                let cell = row.insertCell();
+                cell.colSpan = 3;
+                cell.textContent = "No participation records yet.";
+                cell.className = "empty";
+            }
+        }
+
+
+        // GENERATE REPORTS
+
+        function displayReports() {
+
+            let table = document.getElementById("reportTable");
+
+            table.innerHTML = "";
+
+            let present = 0;
+            let absent = 0;
+
+            for (let i = 0; i < attendance.length; i++) {
+
+                let row = table.insertRow();
+
+                row.insertCell().textContent = attendance[i].volunteer;
+                row.insertCell().textContent = attendance[i].campaign;
+                row.insertCell().textContent = attendance[i].role;
+                row.insertCell().textContent = attendance[i].status;
+
+                if (attendance[i].status === "Present") {
+                    present++;
+                } else if (attendance[i].status === "Absent") {
+                    absent++;
+                }
+
+            }
+
+            if (attendance.length === 0) {
+                let row = table.insertRow();
+                let cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = "No report data available yet.";
+                cell.className = "empty";
+            }
+
+            document.getElementById("reportAssignments").innerText =
+                assignments.length;
+
+            document.getElementById("reportPresent").innerText = present;
+
+            document.getElementById("reportAbsent").innerText = absent;
+        }
+
+
+        // UPDATE DASHBOARD
+
+        function updateDashboard() {
+
+            let present = 0;
+
+            for (let i = 0; i < attendance.length; i++) {
+
+                if (attendance[i].status === "Present") {
+                    present++;
+                }
+
+            }
+
+            document.getElementById("volunteerCount").innerText =
+                volunteers.length;
+
+            document.getElementById("campaignCount").innerText =
+                campaigns.length;
+
+            document.getElementById("assignmentCount").innerText =
+                assignments.length;
+
+            document.getElementById("presentCount").innerText =
+                present;
+        }
+
+
+        // INITIAL DISPLAY
+
+        displayVolunteers();
+        displayCampaigns();
+        displayAssignments();
+        displayAttendance();
+        updateDropdowns();
+        updateDashboard();
+        displayReports();
+
+    </script>
+
+</body>
+</html>
